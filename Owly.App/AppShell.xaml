@@ -7,7 +7,7 @@
     Title="Owly.App">
 
     <ShellContent
-        Title="Home"
+        Title="Owly"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
