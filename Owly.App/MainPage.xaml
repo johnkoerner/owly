@@ -4,12 +4,14 @@
              x:Class="Owly.App.MainPage" 
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.TreeView;assembly=Syncfusion.Maui.TreeView"
              xmlns:treeviewengine="clr-namespace:Syncfusion.TreeView.Engine;assembly=Syncfusion.Maui.TreeView"
+             xmlns:local="clr-namespace:Owly.App"
              >
 
     <Grid RowDefinitions="*"
           ColumnDefinitions=".25*,.75*">
 
-        <syncfusion:SfTreeView x:Name="treeView" >
+        <!-- Left Column - Tree View -->
+        <syncfusion:SfTreeView x:Name="treeView" Grid.Column="0">
             <syncfusion:SfTreeView.Nodes>
                 <treeviewengine:TreeViewNode Content="Australia">
                     <treeviewengine:TreeViewNode.ChildNodes>
@@ -32,6 +34,103 @@
                 </treeviewengine:TreeViewNode>
             </syncfusion:SfTreeView.Nodes>
         </syncfusion:SfTreeView>
+
+        <!-- Right Column - Dynamic Tabbed Experience -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            
+            <!-- Tab Headers with Scrolling -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" BackgroundColor="LightGray">
+                <!-- Left Arrow Button -->
+                <Button Grid.Column="0"
+                        Text="‹"
+                        BackgroundColor="Transparent"
+                        TextColor="Black"
+                        BorderWidth="0"
+                        Padding="10,10"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        Clicked="OnScrollLeftClicked"
+                        x:Name="leftArrowButton" />
+                
+                <!-- Tab Container with Scrolling -->
+                <ScrollView Grid.Column="1" 
+                           Orientation="Horizontal" 
+                           HorizontalScrollBarVisibility="Never"
+                           HorizontalOptions="FillAndExpand"
+                           x:Name="tabScrollView">
+                    <HorizontalStackLayout x:Name="tabContainer" 
+                                          Spacing="0"
+                                          HorizontalOptions="Start">
+                        <!-- Dynamic tabs will be added here programmatically -->
+                    </HorizontalStackLayout>
+                </ScrollView>
+                
+                <!-- Right Arrow Button -->
+                <Button Grid.Column="2"
+                        Text="›"
+                        BackgroundColor="Transparent"
+                        TextColor="Black"
+                        BorderWidth="0"
+                        Padding="10,10"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        Clicked="OnScrollRightClicked"
+                        x:Name="rightArrowButton" />
+                
+                <!-- Add Tab Button -->
+                <Button Grid.Column="3"
+                        Text="+"
+                        BackgroundColor="Transparent"
+                        TextColor="Black"
+                        BorderWidth="0"
+                        Padding="15,10"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        Clicked="OnAddTabClicked" />
+            </Grid>
+
+            <!-- Tab Content -->
+            <Grid Grid.Row="1" x:Name="tabContentGrid">
+                <CollectionView ItemsSource="{Binding Tabs}" 
+                              SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <ScrollView IsVisible="{Binding IsSelected}">
+                                <VerticalStackLayout Spacing="20" Padding="20">
+                                    <Label Text="{Binding Title}" 
+                                           SemanticProperties.HeadingLevel="Level1" 
+                                           FontSize="32" 
+                                           HorizontalOptions="Center" />
+                                    
+                                    <Label Text="{Binding Content}" 
+                                           SemanticProperties.Description="Tab content description"
+                                           HorizontalOptions="Center" />
+                                    
+                                    <Frame BorderColor="Gray" Padding="20" CornerRadius="10">
+                                        <VerticalStackLayout Spacing="10">
+                                            <Label Text="Tab Information" FontSize="20" FontAttributes="Bold" />
+                                            <Label Text="{Binding Title, StringFormat='This is the {0} tab content.'}" />
+                                            <Label Text="You can customize this content based on your application needs." />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </VerticalStackLayout>
+                            </ScrollView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Grid>
     </Grid>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Converter for tab background color -->
+            <local:TabSelectionConverter x:Key="TabSelectionConverter" />
+            <!-- Converter for tab text color -->
+            <local:TabTextConverter x:Key="TabTextConverter" />
+            <!-- Converter to show/hide close button -->
+            <local:ShowCloseButtonConverter x:Key="ShowCloseButtonConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
 </ContentPage>
